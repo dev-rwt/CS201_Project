@@ -1,8 +1,8 @@
 #include<stdio.h>
 
 int main(){
-    int x=0;
+    int x=69;
     printf("%d",x);
     printf("%d",x);
-    return;
+    return 69;
 }
