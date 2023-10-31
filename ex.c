@@ -47,6 +47,35 @@ kdt* allocate()
 }
 
 
+
+kdt* insert(kdt *root, int *arr, int depth)
+{
+    int i;
+
+    if(root == NULL)
+    {
+        kdt *temp;
+        temp = allocate();
+        if (temp == NULL)
+        {
+            printf("MEMORY ALLOCATION FAILED !!!");
+            return NULL;
+        }
+        for(i=0;i<k;i++)
+            temp->data[i] = arr[i];
+
+        return root;
+    }
+    
+    if (arr[depth%k] > root->data[depth%k])
+        root = insert(root->right , arr , depth+1);
+    else
+        root = insert(root->left , arr , depth+1);
+
+    return root;
+}
+
+
 int main()
 {
     return 0;    
