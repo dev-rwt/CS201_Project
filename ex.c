@@ -22,6 +22,31 @@ double distance_parameter(int *arr1 , int *arr2)
 }
 
 
+
+kdt* allocate()
+{
+    kdt *node;
+    node = (kdt*)malloc(sizeof(kdt));
+    if (node == NULL)
+    {
+        printf("MEMORY ALLOCATION FAILED !!!");
+        return NULL;
+    }
+
+    node->left = NULL;
+    node->right = NULL;
+
+    node->data = (int*)malloc(k * sizeof(int));
+    if (node->data == NULL)
+    {
+        printf("MEMORY ALLOCATION FAILED !!!");
+        return NULL;
+    }
+
+    return node;
+}
+
+
 int main()
 {
     return 0;    
