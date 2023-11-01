@@ -76,6 +76,44 @@ kdt* insert(kdt *root, int *arr, int depth)
 }
 
 
+
+kdt* search(kdt* root,int arr[],int depth){
+    if(root==NULL)
+    {
+        return NULL;
+    }
+
+    if(root->data[depth%k] == arr[depth%k])
+    {
+        int flag=1;
+        for(int i=0;i<k;i++)
+        {
+            if(root->data[i]!=arr[i])
+            {
+                flag=0;
+                break;
+            }
+        }
+        
+        if(flag)
+            return root;
+        else 
+            return search(root->left,arr,depth+1);
+        
+    }
+
+    else if(root->data[depth%k] > arr[depth%k])
+    {
+        return search(root->left,arr,depth+1);
+    }
+    else
+    {
+        return search(root->right,arr,depth+1);
+    }
+}
+
+
+
 int main()
 {
     return 0;    
