@@ -7,10 +7,15 @@ typedef struct kdt
 {
     int *data;
     struct kdt *left,*right;
-}kdt;
+} kdt;
+
+
 int k=-1;
+double min_dis=INFINITY;
+double min_dis_inef=INFINITY;
 
-
+kdt* near_point=NULL;
+kdt* near_point_inef=NULL;
 
 double distance_parameter(int *arr1 , int *arr2)
 {
@@ -112,6 +117,42 @@ kdt* search(kdt* root,int arr[],int depth){
     }
 }
 
+
+void nearestneighbour(kdt* root,int source[],int depth)
+{
+    if(root==NULL) 
+        return;
+    
+    else if(distance_parameter(root->data,source) < min_dis)
+    {
+        if(distance_parameter(root->data,source)!=0)
+        {
+            min_dis=distance_parameter(root->data,source);
+            near_point=root;
+        }
+        
+        nearestneighbour(root->left,source,depth+1);
+        nearestneighbour(root->right,source,depth+1); 
+    }
+    else if (min_dis < fabs(root->data[depth%k]-source[depth%k]))
+    {
+        if ((root->data[depth%k]-source[depth%k])<0)
+        {
+            nearestneighbour(root->right,source,depth+1);
+        }
+        
+        else
+        {
+            nearestneighbour(root->left,source,depth+1);
+        }     
+    }
+    
+    else
+    {
+        nearestneighbour(root->left,source,depth+1);
+        nearestneighbour(root->right,source,depth+1);
+    }
+}
 
 
 int main()
