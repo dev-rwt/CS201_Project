@@ -23,7 +23,7 @@ double distance_parameter(int *arr1 , int *arr2)
     int i;
     for (i=0;i<k;i++)
         interspace += (arr1[i] - arr2[i])*(arr1[i] - arr2[i]);
-    return interspace;
+    return sqrt(interspace);
 }
 
 
@@ -136,7 +136,7 @@ void nearestneighbour(kdt* root,int source[],int depth)
     }
     else if (min_dis < fabs(root->data[depth%k]-source[depth%k]))
     {
-        if ((root->data[depth%k]-source[depth%k])<0)
+        if ((root->data[depth%k]<source[depth%k]))
         {
             nearestneighbour(root->right,source,depth+1);
         }
@@ -152,6 +152,26 @@ void nearestneighbour(kdt* root,int source[],int depth)
         nearestneighbour(root->left,source,depth+1);
         nearestneighbour(root->right,source,depth+1);
     }
+}
+
+
+void inefficient_NN(kdt* root,int source[])//Inefficient way of finding the nearest neighbour (doing a inorder traversal and updating the nearest data)
+{
+     if(root==NULL)
+    return;
+
+    inefficient_NN(root->left,source);
+
+    if((min_dis_inef > distance_parameter(root->data,source)) && ((distance_parameter(root->data,source))!=0))
+    {
+        min_dis_inef = distance_parameter(root->data,source);
+        near_point_inef = root;
+    }
+
+    inefficient_NN(root->right,source);
+    
+    return;
+
 }
 
 
