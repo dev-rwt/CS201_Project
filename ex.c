@@ -118,6 +118,29 @@ kdt* search(kdt* root,int arr[],int depth){
 }
 
 
+void inorder(kdt* root)//Print the inorder traversal of the tree
+{
+    if(root==NULL)
+        return;
+
+    inorder(root->left);
+    {
+        printf("(");
+
+        for (int i = 0; i < k; i++)
+        {
+            printf("%d%s",root->data[i] , (i<k-1)? "," : "");
+        }
+
+        printf(") ");
+    }
+
+    inorder(root->right);
+
+    return;
+}
+
+
 void nearestneighbour(kdt* root,int source[],int depth)
 {
     if(root==NULL) 
