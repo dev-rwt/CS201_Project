@@ -53,10 +53,13 @@ kdt* allocate()
 
 
 
+
+
+
+
 kdt* insert(kdt *root, int *arr, int depth)
 {
     int i;
-
     if(root == NULL)
     {
         kdt *temp;
@@ -66,9 +69,9 @@ kdt* insert(kdt *root, int *arr, int depth)
             printf("MEMORY ALLOCATION FAILED !!!");
             return NULL;
         }
+
         for(i=0;i<k;i++)
             temp->data[i] = arr[i];
-
         return root;
     }
     
@@ -82,7 +85,11 @@ kdt* insert(kdt *root, int *arr, int depth)
 
 
 
-kdt* search(kdt* root,int arr[],int depth){
+
+
+
+kdt* search(kdt* root,int arr[],int depth)
+{
     if(root==NULL)
     {
         return NULL;
@@ -118,6 +125,11 @@ kdt* search(kdt* root,int arr[],int depth){
 }
 
 
+
+
+
+
+
 void inorder(kdt* root)//Print the inorder traversal of the tree
 {
     if(root==NULL)
@@ -139,6 +151,12 @@ void inorder(kdt* root)//Print the inorder traversal of the tree
 
     return;
 }
+
+
+
+
+
+
 
 
 void nearestneighbour(kdt* root,int source[],int depth)
@@ -178,6 +196,13 @@ void nearestneighbour(kdt* root,int source[],int depth)
 }
 
 
+
+
+
+
+
+
+
 void inefficient_NN(kdt* root,int source[])//Inefficient way of finding the nearest neighbour (doing a inorder traversal and updating the nearest data)
 {
      if(root==NULL)
@@ -198,7 +223,218 @@ void inefficient_NN(kdt* root,int source[])//Inefficient way of finding the near
 }
 
 
+
+
+
+
+
+
+
 int main()
 {
-    return 0;    
+    char choice;
+    kdt *root=NULL;
+    int count=1;
+
+    loop:
+    printf("\n*********************************************");
+    printf("\nI: Insert a point\nF: Insert using file\nS: Search\nN: Finding nearest neighbour(Using K-D Tree)\nT: Traversal\nE: Finding Nearest neighbour(Using a naive approach)\nQ: Quit\n");
+    fflush(stdin);
+    scanf(" %c", &choice);
+    
+    switch (toupper(choice))
+    {
+    case 'I':
+        {
+            if (count)
+            {
+                 printf("Enter the value of K: ");
+                 scanf("%d",&k);
+                 count=0;
+            }
+
+            printf("Enter the element: ");
+            int s[k];
+            
+            for (int i = 0; i < k; i++)
+            {
+                scanf("%d",&s[i]);
+            }
+
+            root = insert(root,s,0);
+            goto loop;
+        }
+    break;
+
+    case 'S':
+        {
+            printf("Enter the search element : ");
+            int s[k];
+
+            for (int i = 0; i < k; i++)
+            {
+                scanf("%d",&s[i]);
+            }
+
+            if((search(root,s,0))!=NULL)
+            printf("Found");
+
+            else printf("Not found");
+            goto loop;
+
+        }
+    break;
+    
+    case 'N':
+        {
+            
+            printf("Enter the coordinates : ");
+            int s[k];
+            for (int i = 0; i < k; i++)
+            {
+                scanf("%d",&s[i]);
+            }
+
+            nearsetneighbour(root,s,0);
+            
+            if (near_point==NULL)
+            {
+                printf("Can't find nearest neighbour!\n");
+            }
+            else
+            {
+                printf("{");
+                for (int i = 0; i < k; i++)
+                {
+                    printf("%d%s",near_point->data[i] , (i<k-1)? "," : "");
+                }
+                printf("}\n");
+            }
+            
+            min_dis=INFINITY;
+            near_point=NULL;
+            goto loop;
+        }
+    break;
+
+    case 'F':
+        {
+            FILE * file = fopen ("Example.txt","r");//opening the file in read mode
+
+            if(file==NULL)
+            {
+                printf("File can't be open.");
+                goto loop;
+            }
+
+            int N;
+
+            fscanf(file,"%d",&N);
+            
+            if(count)
+            {
+                fscanf(file,"%d",&k);
+                count = 0 ;
+            }
+
+            else 
+            {
+                int temp;
+                fscanf(file,"%d",&temp);
+
+                if(temp!=k)
+                {
+                    printf("Dimension of file is different with the dimension of the tree");
+                    goto loop;
+                }
+            }
+
+            int s[k];
+
+            for (int  i = 0; i < N; i++)
+            {
+            
+                for (int i = 0; i < k; i++)
+                {
+                    fscanf(file,"%d",&s[i]);
+                }
+
+                root = insert(root,s,0);
+
+                
+            }
+
+            goto loop;
+            
+        }
+    break;
+    
+    case 'T':
+        {
+            inorder(root);
+            printf("\n");
+            goto loop;            
+        }
+    break;
+
+    case 'Q':
+        {
+            return 0;         
+        }
+    break;
+
+    case 'E':
+    {
+         printf("Enter the coordinates : ");
+            int s[k];
+            for (int i = 0; i < k; i++)
+            {
+                scanf("%d",&s[i]);
+            }
+
+            in_efficient_NN(root,s);
+            
+            if (near_point_inef==NULL)
+            {
+                printf("Can't find nearest neighbour\n");
+            }
+            else
+            {
+                printf("{");
+                for (int i = 0; i < k; i++)
+                {
+                    printf("%d%s",near_point_inef->data[i] , (i<k-1)? "," : "");
+                }
+                printf("}\n");
+            }
+            
+            min_dis_inef=INFINITY;
+            near_point_inef=NULL;
+            goto loop;
+
+    }
+    
+    break;
+
+
+    default:
+    {
+        printf("Invalid input");
+        goto loop;
+    }
+        break;
+    }
+
+    
+    return 0;
 }
+
+
+
+
+
+
+
+
+
+
