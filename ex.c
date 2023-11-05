@@ -19,8 +19,6 @@ int num=0;
 
 
 
-
-
 void swap(double *a,double *b) 
 {
     double temp = *a;
@@ -38,8 +36,6 @@ double distance_parameter(int *arr1 , int *arr2)
         interspace += (arr1[i] - arr2[i])*(arr1[i] - arr2[i]);
     return sqrt(interspace);
 }
-
-
 
 
 
@@ -68,8 +64,6 @@ kdt* allocate()
 
     return node;
 }
-
-
 
 
 
@@ -190,45 +184,52 @@ void inorder(kdt* root)//Print the inorder traversal of the tree
 
 
 
-
-
-
-
-
-void k_nearest_neighbors(kdt x, int source[], int d , int K , int num_neighbors , double* k_distances , kdt** k_nearest )
-{
-    if (x == NULL) {
-        return;
+void func(kdt* x, int source[], int d , int K , double* k_distances , kdt** k_nearest){
+    double dist_x = distance_parameter(x->data, source);
+    for (int i = 0;i<K;i++) {
+        if (dist_x < k_distances[i]) {
+            for (int j=K-1;j>i;j--) {
+                k_distances[j] = k_distances[j - 1];
+                k_nearest[j] = k_nearest[j - 1];
+            }
+            k_distances[i] = dist_x;
+            k_nearest[i] = x;
+            break;
+        }
     }
 
-    double dist_x = distance_parameter(x->data, source);
+}
 
-    if (*num_neighbors < K || dist_x < k_distances[*num_neighbors - 1]) {
-        if (dist_x != 0) {
-            if (*num_neighbors < K) {
-                k_distances[*num_neighbors] = dist_x;
-                k_nearest[*num_neighbors] = x;
-                (*num_neighbors)++;
-            } else {
-                for (int i = K - 1; i > 0; i--) {
-                    k_distances[i] = k_distances[i - 1];
-                    k_nearest[i] = k_nearest[i - 1];
-                }
-                k_distances[0] = dist_x;
-                k_nearest[0] = x;
-            }
-        }
-        k_nearest_neighbors(x->left, source, d + 1 ,K,num_neighbors,k_distances,k_nearest);
-        k_nearest_neighbors(x->right, source, d + 1,K,num_neighbors,k_distances,k_nearest);
-    } else if (k_distances[*num_neighbors - 1] > fabs(x->data[d % k] - source[d % k])) {
-        if (x->data[d % k] - source[d % k] < 0) {
-            k_nearest_neighbors(x->right, source, d + 1,K,num_neighbors,k_distances,k_nearest);
-        } else {
-            k_nearest_neighbors(x->left, source, d + 1,K,num_neighbors,k_distances,k_nearest);
-        }
-    } else {
-        k_nearest_neighbors(x->left, source, d + 1,K,num_neighbors,k_distances,k_nearest);
-        k_nearest_neighbors(x->right, source, d + 1,K,num_neighbors,k_distances,k_nearest);
+
+
+
+
+
+void nearestn(kdt *root, int source[], int d, int K, int* num_neighbors , double* k_distances , kdt** k_nearest)
+{
+    if (root==NULL) return;
+    kdt *nextbranch = NULL;
+    kdt *otherbranch = NULL;
+    if (source[d%k] < root->data[d%k])
+    {
+        nextbranch = root->left;
+        otherbranch = root->right;
+    }
+    else
+    {
+        nextbranch = root->right;
+        otherbranch = root->left;
+    }
+    
+    nearestn(nextbranch,source,d+1,K,num_neighbors,k_distances,k_nearest);
+    func(root,source,d,K,k_distances,k_nearest);
+
+    double dist_x = distance_parameter(root->data, source);
+    double dist = fabs(root->data[d%k] - source[d%k]);
+
+    if (dist < dist_x)
+    {
+        nearestn(otherbranch,source,d+1,K,num_neighbors,k_distances,k_nearest);
     }
 }
 
@@ -261,7 +262,6 @@ void printKDTree(kdt* root, int depth) {
 
 
 
-
 int main()
 {
     char choice;
@@ -270,7 +270,7 @@ int main()
 
     loop:
     printf("\n*********************************************");
-    printf("\nI: Insert a point\nF: Insert using file\nD: Display KD-Tree\nS: Search\nN: Finding nearest neighbour(Using K-D Tree)\nT: Inorder Traversal\nQ: Quit\n");
+    printf("\nI: Insert a point\nF: Insert using file\nD: Display KD-Tree\nS: Search\nN: Finding k_nearest neighbour(Using K-D Tree)\nT: Inorder Traversal\nQ: Quit\n");
     fflush(stdin);
     scanf(" %c", &choice);
     
@@ -328,17 +328,20 @@ int main()
             }
 
             int K;
-            printf("Enter the number of nearest neighbours to find : ");
+            printf("Enter the number of k nearest neighbours to find : ");
             scanf("%d",&K);
-            kdt* k_nearest[K];     // Array to store the k-nearest neighbor nodes
-            double k_distances[K];  // Array to store the distances to k-nearest neighbors
+            kdt* k_nearest[K];     // Array to store the k-k_nearest neighbor nodes
+            double k_distances[K];  // Array to store the distances to k-k_nearest neighbors
             int num_neighbors = 0;
             for(int i=0;i<K;i++)
+            {
                 k_nearest[i]=NULL;
+                k_distances[i]=INFINITY;
+            }
 
-            k_nearest_neighbors(root,s, 0,K,&num_neighbors,k_distances,k_nearest);
+            nearestn(root,s,0,K,&num_neighbors,k_distances,k_nearest);
 
-            printf("The %d-nearest neighbors are:\n", K);
+            printf("The %d-k nearest neighbors are:\n", K);
             
             for (int i = 0; i < K; i++)
             {
@@ -358,7 +361,7 @@ int main()
 
     case 'F':
         {
-            FILE * file = fopen ("Example.txt","r");//opening the file in read mode
+            FILE * file = fopen ("C:\\Users\\devan\\Downloads\\Example.txt","r");
 
             if(file==NULL)
             {
@@ -443,7 +446,6 @@ int main()
     
     return 0;
 }
-
 
 
 
