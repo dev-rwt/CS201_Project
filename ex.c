@@ -195,7 +195,7 @@ void inorder(kdt* root)//Print the inorder traversal of the tree
 
 
 
-void k_nearest_neighbors(kdt *x, int source[], int d , int K , int* num_neighbors , double* k_distances , kdt** k_nearest )
+void k_nearest_neighbors(kdt x, int source[], int d , int K , int num_neighbors , double* k_distances , kdt** k_nearest )
 {
     if (x == NULL) {
         return;
@@ -203,20 +203,14 @@ void k_nearest_neighbors(kdt *x, int source[], int d , int K , int* num_neighbor
 
     double dist_x = distance_parameter(x->data, source);
 
-    if (*num_neighbors<K || dist_x<k_distances[*num_neighbors-1])
-    {
-        if (dist_x!=0)
-        {
-            if (*num_neighbors < K)
-            {
+    if (*num_neighbors < K || dist_x < k_distances[*num_neighbors - 1]) {
+        if (dist_x != 0) {
+            if (*num_neighbors < K) {
                 k_distances[*num_neighbors] = dist_x;
                 k_nearest[*num_neighbors] = x;
                 (*num_neighbors)++;
-            } 
-            else
-            {
-                for (int i=K-1;i>0;i--)
-                {
+            } else {
+                for (int i = K - 1; i > 0; i--) {
                     k_distances[i] = k_distances[i - 1];
                     k_nearest[i] = k_nearest[i - 1];
                 }
@@ -224,22 +218,19 @@ void k_nearest_neighbors(kdt *x, int source[], int d , int K , int* num_neighbor
                 k_nearest[0] = x;
             }
         }
-
-        if (source[d % k] < x->data[d % k])
-        {
-            k_nearest_neighbors(x->left, source, d + 1, K, num_neighbors, k_distances, k_nearest);
-            if (fabs(x->data[d % k] - source[d % k]) < k_distances[*num_neighbors - 1])
-                k_nearest_neighbors(x->right, source, d + 1, K, num_neighbors, k_distances, k_nearest);
+        k_nearest_neighbors(x->left, source, d + 1 ,K,num_neighbors,k_distances,k_nearest);
+        k_nearest_neighbors(x->right, source, d + 1,K,num_neighbors,k_distances,k_nearest);
+    } else if (k_distances[*num_neighbors - 1] > fabs(x->data[d % k] - source[d % k])) {
+        if (x->data[d % k] - source[d % k] < 0) {
+            k_nearest_neighbors(x->right, source, d + 1,K,num_neighbors,k_distances,k_nearest);
+        } else {
+            k_nearest_neighbors(x->left, source, d + 1,K,num_neighbors,k_distances,k_nearest);
         }
-        else
-        {
-            k_nearest_neighbors(x->right, source, d + 1, K, num_neighbors, k_distances, k_nearest);
-            if (fabs(source[d % k] - x->data[d % k]) < k_distances[*num_neighbors - 1])
-                k_nearest_neighbors(x->left, source, d + 1, K, num_neighbors, k_distances, k_nearest);
-        }
+    } else {
+        k_nearest_neighbors(x->left, source, d + 1,K,num_neighbors,k_distances,k_nearest);
+        k_nearest_neighbors(x->right, source, d + 1,K,num_neighbors,k_distances,k_nearest);
     }
 }
-
 
 
 
