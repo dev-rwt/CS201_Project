@@ -247,6 +247,27 @@ void k_nearest_neighbors(kdt *x, int source[], int d , int K , int* num_neighbor
 
 
 
+void printBinarySearchTree(kdt* root, int depth) {
+    if (root == NULL)
+        return;
+
+    int spacing = 4;
+    printBinarySearchTree(root->right, depth + 1);
+    for (int i = 0; i < depth * spacing; i++) {
+        printf(" ");
+    }
+    for (int i;i<k;i++)
+        printf("%d ", root->data[i]);
+    print("/n");
+
+    printBinarySearchTree(root->left, depth + 1);
+}
+
+
+
+
+
+
 
 
 
