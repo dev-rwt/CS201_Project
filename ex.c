@@ -81,7 +81,6 @@ kdt* allocate()
 
 kdt* insert(kdt *root, int *arr, int depth)
 {
-    num++;
     int i;
     if(root == NULL)
     {
@@ -96,6 +95,7 @@ kdt* insert(kdt *root, int *arr, int depth)
         for(i=0;i<k;i++)
             temp->data[i] = arr[i];
         root=temp;
+        num++;
         return root;
     }
     
@@ -195,7 +195,8 @@ void inorder(kdt* root)//Print the inorder traversal of the tree
 
 
 
-void k_nearest_neighbors(kdt *x, int source[], int d , int K , int* num_neighbors , double* k_distances , kdt** k_nearest ) {
+void k_nearest_neighbors(kdt *x, int source[], int d , int K , int* num_neighbors , double* k_distances , kdt** k_nearest )
+{
     if (x == NULL) {
         return;
     }
@@ -224,20 +225,18 @@ void k_nearest_neighbors(kdt *x, int source[], int d , int K , int* num_neighbor
             }
         }
 
-        k_nearest_neighbors(x->left, source, d+1 ,K,num_neighbors,k_distances,k_nearest);
-        k_nearest_neighbors(x->right, source, d+1,K,num_neighbors,k_distances,k_nearest);
-    }
-    else if (k_distances[*num_neighbors - 1] > fabs(x->data[d%k]-source[d%k]))
-    {
-        if (x->data[d%k] - source[d%k] < 0) 
-            k_nearest_neighbors(x->right, source, d+1,K,num_neighbors,k_distances,k_nearest);
+        if (source[d % k] < x->data[d % k])
+        {
+            k_nearest_neighbors(x->left, source, d + 1, K, num_neighbors, k_distances, k_nearest);
+            if (fabs(x->data[d % k] - source[d % k]) < k_distances[*num_neighbors - 1])
+                k_nearest_neighbors(x->right, source, d + 1, K, num_neighbors, k_distances, k_nearest);
+        }
         else
-            k_nearest_neighbors(x->left, source, d+1,K,num_neighbors,k_distances,k_nearest);
-    }
-    else
-    {
-        k_nearest_neighbors(x->left, source, d+1,K,num_neighbors,k_distances,k_nearest);
-        k_nearest_neighbors(x->right, source, d+1,K,num_neighbors,k_distances,k_nearest);
+        {
+            k_nearest_neighbors(x->right, source, d + 1, K, num_neighbors, k_distances, k_nearest);
+            if (fabs(source[d % k] - x->data[d % k]) < k_distances[*num_neighbors - 1])
+                k_nearest_neighbors(x->left, source, d + 1, K, num_neighbors, k_distances, k_nearest);
+        }
     }
 }
 
@@ -420,6 +419,7 @@ int main()
     
     case 'T':
         {
+            printf("The number of nodes are %d\n",num);
             inorder(root);
             printf("\n");
             goto loop;            
