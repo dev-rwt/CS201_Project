@@ -21,6 +21,14 @@ int num=0;
 
 
 
+void swap(double *a,double *b) 
+{
+    double temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+
 
 double distance_parameter(int *arr1 , int *arr2)
 {
@@ -194,14 +202,20 @@ void k_nearest_neighbors(kdt *x, int source[], int d , int K , int* num_neighbor
 
     double dist_x = distance_parameter(x->data, source);
 
-    if (*num_neighbors < K || dist_x < k_distances[*num_neighbors - 1]) {
-        if (dist_x != 0) {
-            if (*num_neighbors < K) {
+    if (*num_neighbors<K || dist_x<k_distances[*num_neighbors-1])
+    {
+        if (dist_x!=0)
+        {
+            if (*num_neighbors < K)
+            {
                 k_distances[*num_neighbors] = dist_x;
                 k_nearest[*num_neighbors] = x;
                 (*num_neighbors)++;
-            } else {
-                for (int i = K - 1; i > 0; i--) {
+            } 
+            else
+            {
+                for (int i=K-1;i>0;i--)
+                {
                     k_distances[i] = k_distances[i - 1];
                     k_nearest[i] = k_nearest[i - 1];
                 }
@@ -210,17 +224,20 @@ void k_nearest_neighbors(kdt *x, int source[], int d , int K , int* num_neighbor
             }
         }
 
-        k_nearest_neighbors(x->left, source, d + 1 ,K,num_neighbors,k_distances,k_nearest);
-        k_nearest_neighbors(x->right, source, d + 1,K,num_neighbors,k_distances,k_nearest);
-    } else if (k_distances[*num_neighbors - 1] > fabs(x->data[d % k] - source[d % k])) {
-        if (x->data[d % k] - source[d % k] < 0) {
-            k_nearest_neighbors(x->right, source, d + 1,K,num_neighbors,k_distances,k_nearest);
-        } else {
-            k_nearest_neighbors(x->left, source, d + 1,K,num_neighbors,k_distances,k_nearest);
-        }
-    } else {
-        k_nearest_neighbors(x->left, source, d + 1,K,num_neighbors,k_distances,k_nearest);
-        k_nearest_neighbors(x->right, source, d + 1,K,num_neighbors,k_distances,k_nearest);
+        k_nearest_neighbors(x->left, source, d+1 ,K,num_neighbors,k_distances,k_nearest);
+        k_nearest_neighbors(x->right, source, d+1,K,num_neighbors,k_distances,k_nearest);
+    }
+    else if (k_distances[*num_neighbors - 1] > fabs(x->data[d%k]-source[d%k]))
+    {
+        if (x->data[d%k] - source[d%k] < 0) 
+            k_nearest_neighbors(x->right, source, d+1,K,num_neighbors,k_distances,k_nearest);
+        else
+            k_nearest_neighbors(x->left, source, d+1,K,num_neighbors,k_distances,k_nearest);
+    }
+    else
+    {
+        k_nearest_neighbors(x->left, source, d+1,K,num_neighbors,k_distances,k_nearest);
+        k_nearest_neighbors(x->right, source, d+1,K,num_neighbors,k_distances,k_nearest);
     }
 }
 
@@ -229,24 +246,6 @@ void k_nearest_neighbors(kdt *x, int source[], int d , int K , int* num_neighbor
 
 
 
-// void inefficient_NN(kdt* root,int source[])//Inefficient way of finding the nearest neighbour (doing a inorder traversal and updating the nearest data)
-// {
-//     if(root==NULL)
-//         return;
-
-//     inefficient_NN(root->left,source);
-
-//     if((min_dis_inef > distance_parameter(root->data,source)) && ((distance_parameter(root->data,source))!=0))
-//     {
-//         min_dis_inef = distance_parameter(root->data,source);
-//         near_point_inef = root;
-//     }
-
-//     inefficient_NN(root->right,source);
-    
-//     return;
-
-// }
 
 
 
@@ -260,7 +259,7 @@ int main()
 
     loop:
     printf("\n*********************************************");
-    printf("\nI: Insert a point\nF: Insert using file\nS: Search\nN: Finding nearest neighbour(Using K-D Tree)\nT: Inorder Traversal\nE: Finding Nearest neighbour(Using a naive approach)\nQ: Quit\n");
+    printf("\nI: Insert a point\nF: Insert using file\nS: Search\nN: Finding nearest neighbour(Using K-D Tree)\nT: Inorder Traversal\nQ: Quit\n");
     fflush(stdin);
     scanf(" %c", &choice);
     
@@ -412,39 +411,7 @@ int main()
         }
     break;
 
-    case 'E':
-    {
-            printf("Enter the coordinates : ");
-            int s[k];
-            double* min_dis_inef = (double*)malloc(sizeof(double)*num);
-            kdt* near_point_inef = (kdt*)malloc(sizeof(kdt)*num);
-
-            for (int i=0; i < k; i++)
-                scanf("%d",&s[i]);
-
-            inefficient_NN(root,s);
-            
-            if (near_point_inef==NULL)
-            {
-                printf("Can't find nearest neighbour\n");
-            }
-            else
-            {
-                printf("{");
-                for (int i = 0; i < k; i++)
-                {
-                    printf("%d%s",near_point_inef->data[i] , (i<k-1)? "," : "");
-                }
-                printf("}\n");
-            }
-            
-            goto loop;
-
-    }
     
-    break;
-
-
     default:
     {
         printf("Invalid input");
